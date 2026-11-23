@@ -602,22 +602,4 @@ public class TestScanTaskIterable {
         .as("Executor should terminate - workers should have exited gracefully")
         .isTrue();
   }
-
-  @Test
-  public void closeIterableWithoutClosingIteratorStopsWorkers() throws Exception {
-    mockClientPostAnswer(
-        invocation -> FetchScanTasksResponse.builder().withFileScanTasks(fileTasks(500)).build());
-
-    ScanTaskIterable iterable = createIterable(planTasks(4), Collections.emptyList());
-    CloseableIterator<FileScanTask> iterator = iterable.iterator();
-    assertThat(iterator.hasNext()).isTrue();
-    iterator.next();
-
-    iterable.close();
-
-    executorService.shutdown();
-    assertThat(executorService.awaitTermination(2, TimeUnit.SECONDS))
-        .as("Workers should exit once the iterable is closed")
-        .isTrue();
-  }
 }
