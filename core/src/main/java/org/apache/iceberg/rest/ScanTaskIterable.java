@@ -107,7 +107,11 @@ class ScanTaskIterable implements CloseableIterable<FileScanTask> {
   }
 
   @Override
-  public void close() throws IOException {}
+  public void close() throws IOException {
+    shutdown.set(true);
+    taskQueue.clear();
+    planTasks.clear();
+  }
 
   private class PlanTaskWorker implements Runnable {
 
